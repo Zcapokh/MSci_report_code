@@ -6,20 +6,19 @@
 
 #include "../include/Force_drag_tiegcm.h"
 
-//
+
+// This is the file in ODL that is an adapted version of the one written by Alex Forsyth
+// Key changes are the the parameters, dates, time units, and filepaths
+
+
 void Force_drag_tiegcm::setup(const Resident_constants &rso_const,
                               std::shared_ptr<Resident_variables> in_state) {
-  // for Alex Forsyth to implement
   std::cout << "Force_drag_tiegcm::setup [1] \n";
   Force_drag::setup(rso_const, in_state);
   loadfiles();
 }
 
 void Force_drag_tiegcm::compute_acceleration() {
-  // The following three if statement are here to catch altitude, time and
-  // latitude values outside the limits expected for the simulations
-  // being run for Alex Forsyth's Fourth Year Project - see project for
-  // for details
   if (state->geodetic.alt < 250.0 || state->geodetic.alt > 550.0) {
     std::stringstream error;
     error.precision(16);
@@ -46,7 +45,6 @@ void Force_drag_tiegcm::compute_acceleration() {
     state->errors.push_back(error.str());
   }
 
-  // for Alex Forsyth to implement
   std::cout << "Force_drag_tiegcm::compute_acceleration [2] \n";
   double rho = get_density(state->eci.epoch.get_MJD_UTC(),
                            (state->geodetic.alt) * 100000,
@@ -118,9 +116,6 @@ double Force_drag_tiegcm::get_density(double time, double altitude,
   int la1 = ((floor((latitude + 3.75) * 0.2) / 0.2) + 55) / 5 + 1;
   //int la1 = static_cast<int>(((floor((latitude + 3.75) * 0.2) / 0.2) + 55) / 5 + 1);
 
-  // this is the time since 00:00 12th of June 2018 (Needs chaning for different
-  // dates) time is converted from days to miniutes to number of 15 miniutes
-  // intervals passed
   double time1 = floor(((time - 54640) * 24 * 60) / 60) + 1;
   //double time1 = floor(((time - 54640.08839299) * 24 * 60) / 60) + 1;
   std::cout << "lo1 is " << lo1 << ", la1 is " << la1 << " and time1 is: " <<
